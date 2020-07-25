@@ -9,7 +9,8 @@ display.style.borderColor = 'black';
 display.style.borderWidth = '2px';
 display.style.fontSize = '60px';
 display.style.display = 'flex';
-display.style.justifyContent= 'right';
+display.style.justifyContent = 'right';
+display.style.fontSize = '48px';
 buttons.appendChild(display);
 
 var pad = document.createElement('div');
@@ -24,57 +25,91 @@ pad.style.flexDirection = 'column';
 
 var row1 = document.createElement('div');
 var clear = document.createElement('button');
-style_button(clear, 'c', row1);
+styleButton(clear, 'c', row1);
 var div = document.createElement('button');
-//div.style.float = 'right';
-style_button(div, '/', row1);
+styleButton(div, '/', row1);
 
 var row2 = document.createElement('div');
 for (i = 7; i < digits; i++) {
-    var digit_btn = document.createElement('button');
-    style_button(digit_btn, i, row2);         
+    var digitBtn = document.createElement('button');
+    styleButton(digitBtn, i, row2);         
 }
 var mul = document.createElement('button');
-//mul.style.float = 'right';
-style_button(mul, '*', row2);
+styleButton(mul, '*', row2);
 
 var row3 = document.createElement('div');
 for (i = 4; i < 7; i++) {
-    var digit_btn = document.createElement('button');
-    style_button(digit_btn, i, row3);         
+    var digitBtn = document.createElement('button');
+    styleButton(digitBtn, i, row3);         
 }
 var minus = document.createElement('button');
-//minus.style.float = 'right';
-style_button(minus, '-', row3);
+styleButton(minus, '-', row3);
 
 var row4 = document.createElement('div');
 for (i = 1; i < 4; i++) {
-    var digit_btn = document.createElement('button');
-    style_button(digit_btn, i, row4);
+    var digitBtn = document.createElement('button');
+    styleButton(digitBtn, i, row4);
 }
 var plus = document.createElement('button');
-//plus.style.float = 'right';
-style_button(plus, '+', row4);
+styleButton(plus, '+', row4);
 
 var row5 = document.createElement('div');
-var digit_btn = document.createElement('button');
-style_button(digit_btn, 0, row5);
+var digitBtn = document.createElement('button');
+styleButton(digitBtn, 0, row5);
 var equals = document.createElement('button');
-//equals.style.float = 'right';
-style_button(equals, '=', row5);
+styleButton(equals, '=', row5);
+
+buttons.appendChild(pad);
 
 /* -------------------------------------------------------------- */
-function set_display (val) {
-    display.value = val;
+class Stack {
+    constructor() {
+        this.items = [];
+    }
+
+    push(element) {
+        this.items.push(element);        
+    }
+
+    pop() {
+        if (this.items.length == 0) {
+            return "Stack empty";
+        }
+
+        return this.items.pop();
+    }
+
+    peek() {
+        return this.items[this.items.length - 1];
+    }
+
+    emptyStack() {
+        var s = "";
+        for (i = 0; i < this.items.length; i++) {
+            s = this.pop();
+        }
+
+        return s;
+    }
+
+    isEmpty() {
+        return this.items.length == 0;
+    }
+
+    printStack() {
+        var s = "";
+        for (var i = 0; i < this.items.length; i++) {
+            s += this.items[i] + " ";
+        }
+
+        return s;
+    }
 }
 
-function get_display () {
-    return display.value;
-}
+var exprStack = new Stack();
+var term = '';
 
-var t1 = '', t2 = '', op = '';
-
-function style_button(btn, label, row) {
+function styleButton(btn, label, row) {
     btn.style.width = '50px';
     btn.style.height = '50px';
     btn.style.borderRadius = '50%';
@@ -82,32 +117,48 @@ function style_button(btn, label, row) {
     btn.textContent = label;
     btn.value = label;
     btn.addEventListener('click', function() {
-        if (btn.value != 'c' && btn.value != '=') {
-            if (isNaN(btn.value)) {
-                op = btn.value;
-                t1 = t2;
-                t2 = '';
-            }
-            else {
-                t2 += btn.value                
-            }
-
-            display.textContent = t1 + op + t2;
+        if (!isNaN(btn.value)) {
+            term += btn.value;
+            display.textContent = term;
         }
         else {
-            if (btn.value == '=') {
-                display.textContent = calculate(op, t1, t2);
-                t1 = t2 = op = '';
+            if (btn.value == 'c') {
+                exprStack = new Stack();
+                term = '';
+                display.textContent = term;
+            }
+            else if (btn.value == '=') {
+                exprStack.push(term);
+
+                var t1 = exprStack.pop();
+                var t2 = exprStack.pop();
+                var op = exprStack.pop();
+
+                term = calculate(op, t1, t2);
+                display.textContent = term;
             }
             else {
-                display.textContent = t1 = t2 = op = 0;
+                if (!isNaN(term) && !isNaN(exprStack.peek())) {
+                    var t1 = exprStack.pop();
+                    var t2 = term;
+                    var op = exprStack.pop();
+
+                    term = calculate(op, t1, t2);
+                }
+
+                exprStack.push(btn.value);
+                exprStack.push(term);
+                display.textContent = term;
+                term = '';
             }
         }
+
+        console.log("term: " + term);
+        console.log("stack: " + exprStack.printStack());
     });
 
     row.appendChild(btn);
     pad.appendChild(row);
-    buttons.appendChild(pad);
 }
 
 function calculate(op, t1, t2) {
@@ -144,5 +195,6 @@ function multiply(t1, t2) {
 }
 
 function divide(t1, t2) {
-    return t1 / t2;
+    return t2 / t1;
 }
+
