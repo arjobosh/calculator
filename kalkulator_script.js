@@ -201,6 +201,6 @@ function multiply(t1, t2) {
 }
 
 function divide(t1, t2) {
-    return (t2 / t1).toFixed(3);
+    return (t2 / t1);
 }
 
