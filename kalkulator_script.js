@@ -1,6 +1,6 @@
 const digits = 10;
 const body = document.querySelector('body');
-body.style.backgroundColor = '#fff291'
+body.style.backgroundColor = '#ffc9c9'
 
 const buttons = document.querySelector('.calc-container');
 buttons.style.display = 'flex';
@@ -9,7 +9,7 @@ buttons.style.alignItems = 'center';
 
 var display = document.createElement('div');
 display.id = 'display';
-display.style.width = '230px';
+display.style.width = '300px';
 display.style.height = '100px';
 display.style.marginTop = '50px';
 display.style.borderStyle = 'solid';
@@ -22,20 +22,24 @@ display.style.fontSize = '50px';
 display.style.display = 'flex';
 display.style.justifyContent = 'right';
 display.style.padding = '5px';
-display.style.backgroundColor = '#fffce8';
+display.style.backgroundColor = '#e6e6e6';
+display.style.webkitTextStroke = '1px black';
+display.style.color = 'white';
+display.style.fontWeight = 'bold';
+
 buttons.appendChild(display);
 
 var pad = document.createElement('div');
 pad.id = 'pad';
-pad.style.width = '230px';
-pad.style.height = '270px';
+pad.style.width = '300px';
+pad.style.height = '300px';
 pad.style.borderStyle = 'solid';
 pad.style.borderColor = 'black';
 pad.style.borderWidth = '5px';
 pad.style.borderTopWidth = '1px';
 pad.style.borderBottomLeftRadius = '1.5em';
 pad.style.borderBottomRightRadius = '1.5em';
-pad.style.backgroundColor = '#c2c2c2';
+pad.style.backgroundColor = 'black';//'#c2c2c2';
 pad.style.display = 'grid';
 pad.style.alignItems = 'center';
 pad.style.justifyItems = 'center';
@@ -83,16 +87,19 @@ buttons.appendChild(pad);
 var exprStack = new Stack();
 var term = '';
 var wasEQ = false;
+const MAX_DISPLAY = 10;
 
 function styleButton(btn, label) {
     btn.id = label;
-    btn.style.width = '45px';
-    btn.style.height = '45px';
-    btn.style.border = 'none';
-    btn.style.borderRadius = '37%'
-    btn.style.backgroundColor = 'black';
-    btn.style.color = 'white';
-    btn.style.fontSize = '110%';
+    btn.style.width = '95%';
+    btn.style.height = '95%';
+    btn.style.borderWidth = '1px';
+    btn.style.borderRadius = '10%';
+    btn.style.borderColor = 'white';
+    btn.style.backgroundColor = '#000000';
+    btn.style.color = '#ffff00';//'white';
+    btn.style.fontWeight = 'bold';
+    btn.style.fontSize = '150%';
     btn.style.fontFamily = 'helvetica';
     btn.textContent = label;
     btn.value = label;
@@ -100,8 +107,10 @@ function styleButton(btn, label) {
         if (!isNaN(btn.value)) {
             if (wasEQ)
                 term = btn.value;
-            else
-                term += btn.value;
+            else {
+                if (term.toString().length < MAX_DISPLAY)
+                    term += btn.value;
+            }
             display.textContent = term;
 
             wasEQ = false;
@@ -149,10 +158,18 @@ function styleButton(btn, label) {
             }
         }
 
-        //console.log("term: " + term);
-        //console.log("stack: " + exprStack.printStack());
+        console.log("term: " + term);
+        console.log("stack: " + exprStack.printStack());
     });
     
+    btn.addEventListener('mouseenter', function() {
+        btn.style.backgroundColor = '#383838';
+    });
+
+    btn.addEventListener('mouseleave', function() {
+        btn.style.backgroundColor = '#000000';
+    });
+
     if (label == '÷' || label == 'x' || label == '-' || label == '+' || label == '=') {
         btn.className = 'operator';
     }
@@ -185,7 +202,7 @@ function calculate(op, t1, t2) {
             result = 0;                
     }
 
-    return (result.toPrecision().length > 8) ? result.toPrecision(3) : result;
+    return (result.toPrecision().length > MAX_DISPLAY) ? result.toPrecision(10) : result;
 }
 
 function add(t1, t2) {
