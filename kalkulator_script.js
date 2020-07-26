@@ -1,6 +1,25 @@
 const digits = 10;
 const body = document.querySelector('body');
 body.style.backgroundColor = '#ffc9c9'
+body.style.display = 'flex';
+body.style.marginLeft = 'auto';
+body.style.marginRight = 'auto';
+body.style.width = '320px';
+
+const title = document.querySelector('.title');
+title.style.marginTop = '50px';
+title.style.paddingLeft = '25px';
+title.style.paddingTop = '364px';
+title.style.fontFamily = 'helvetica';
+title.style.whiteSpace = 'pre';
+title.style.verticalAlign = 'text-bottom';
+title.style.fontWeight = 'bold';
+title.style.fontStyle = 'oblique';
+title.style.fontSize = '32px';
+title.style.color = '#ffff00';
+title.style.webkitTextStroke = '0.5px black';
+
+title.textContent = 'a calculator\nby josh';
 
 const buttons = document.querySelector('.calc-container');
 buttons.style.display = 'flex';
@@ -210,7 +229,7 @@ function add(t1, t2) {
 }
 
 function subtract(t1, t2) {
-    return (t1 > t2) ? -(t1 - t2) : (t1 - t2);
+    return -(t1 - t2);
 }
 
 function multiply(t1, t2) {
