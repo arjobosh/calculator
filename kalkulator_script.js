@@ -1,4 +1,7 @@
 const digits = 10;
+const body = document.querySelector('body');
+body.style.backgroundColor = '#fff291'
+
 const buttons = document.querySelector('.calc-container');
 buttons.style.display = 'flex';
 buttons.style.flexDirection = 'column';
@@ -19,6 +22,7 @@ display.style.fontSize = '50px';
 display.style.display = 'flex';
 display.style.justifyContent = 'right';
 display.style.padding = '5px';
+display.style.backgroundColor = '#fffce8';
 buttons.appendChild(display);
 
 var pad = document.createElement('div');
@@ -76,50 +80,6 @@ styleButton(plus, '+');
 buttons.appendChild(pad);
 
 /* -------------------------------------------------------------- */
-class Stack {
-    constructor() {
-        this.items = [];
-    }
-
-    push(element) {
-        this.items.push(element);        
-    }
-
-    pop() {
-        if (this.items.length == 0) {
-            return "Stack empty";
-        }
-
-        return this.items.pop();
-    }
-
-    peek() {
-        return this.items[this.items.length - 1];
-    }
-
-    emptyStack() {
-        var s = "";
-        for (i = 0; i < this.items.length; i++) {
-            s = this.pop();
-        }
-
-        return s;
-    }
-
-    isEmpty() {
-        return this.items.length == 0;
-    }
-
-    printStack() {
-        var s = "";
-        for (var i = 0; i < this.items.length; i++) {
-            s += this.items[i] + " ";
-        }
-
-        return s;
-    }
-}
-
 var exprStack = new Stack();
 var term = '';
 
@@ -223,7 +183,7 @@ function add(t1, t2) {
 }
 
 function subtract(t1, t2) {
-    return -(t1 - t2);
+    return (t1 > t2) ? -(t1 - t2) : (t1 - t2);
 }
 
 function multiply(t1, t2) {
