@@ -82,6 +82,7 @@ buttons.appendChild(pad);
 /* -------------------------------------------------------------- */
 var exprStack = new Stack();
 var term = '';
+var wasEQ = false;
 
 function styleButton(btn, label) {
     btn.id = label;
@@ -97,14 +98,20 @@ function styleButton(btn, label) {
     btn.value = label;
     btn.addEventListener('click', function() {
         if (!isNaN(btn.value)) {
-            term += btn.value;
+            if (wasEQ)
+                term = btn.value;
+            else
+                term += btn.value;
             display.textContent = term;
+
+            wasEQ = false;
         }
         else {
             if (btn.value == 'C') {
                 exprStack = new Stack();
                 term = '';
                 display.textContent = term;
+                wasEQ = false;
             }
             else if (btn.value == '=') {
                 if (!isNaN(term) && !isNaN(exprStack.peek())) {
@@ -116,6 +123,7 @@ function styleButton(btn, label) {
 
                     term = calculate(op, t1, t2);
                     display.textContent = term;
+                    wasEQ = true;
                 }
             }
             else {
@@ -137,11 +145,12 @@ function styleButton(btn, label) {
                 exprStack.push(term);
                 display.textContent = term;
                 term = '';
+                wasEQ = false;
             }
         }
 
-        console.log("term: " + term);
-        console.log("stack: " + exprStack.printStack());
+        //console.log("term: " + term);
+        //console.log("stack: " + exprStack.printStack());
     });
     
     if (label == '÷' || label == 'x' || label == '-' || label == '+' || label == '=') {
@@ -175,7 +184,8 @@ function calculate(op, t1, t2) {
         default:
             result = 0;                
     }
-    return result;
+
+    return (result.toPrecision().length > 8) ? result.toPrecision(3) : result;
 }
 
 function add(t1, t2) {
@@ -191,6 +201,6 @@ function multiply(t1, t2) {
 }
 
 function divide(t1, t2) {
-    return t2 / t1;
+    return (t2 / t1).toFixed(3);
 }
 
